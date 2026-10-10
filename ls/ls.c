@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <string.h>
 #include <dirent.h>
 
 /* basic ls, just lists files in order */
@@ -23,6 +25,36 @@ int basic(char* path) {
 
   return 0;
 }
+
+/* advanced ls, lists files in order with size and ownership */
+int advanced(char* path) {
+  struct dirent *entry;
+  DIR *dir = opendir("./");
+
+  struct stat stats;
+
+  /* if dir is NULL, its because we couldn't open it */
+  if (dir == NULL) {
+    printf("error opening directory!\n");
+    return 1;
+  }
+
+  /* until there are no entries left, print them */
+  while((entry = readdir(dir)) != NULL) {
+    char filepath[1024];
+
+    strcat(filepath, path);
+    strcat(filepath, entry->d_name);
+
+    if(stat(filepath, &stats));
+  }
+
+  closedir(dir);
+
+  return 0;
+
+}
+
 
 int main(int argc, char** argv) {
   /* default path is current directory ./ */
@@ -56,6 +88,8 @@ int main(int argc, char** argv) {
 
   if (perms == 0) {
     basic(path);
+  } else {
+    advanced(path);
   }
 
   return 0;
